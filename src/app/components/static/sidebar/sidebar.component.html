@@ -1,0 +1,57 @@
+<header class="navbar1">
+    <div class="navbar-part1">
+        <button class="navbar__menu-toggle" (click)="toggleSidebar()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <div class="navbar__brand">Digital Library</div>
+    </div>
+    <div class="navbar-part2">
+        <div class="sidebar__user">
+            <mat-icon class="sidebar__user-icon">account_circle</mat-icon>
+            <span class="sidebar__user-name">{{nombre}}</span>
+            <mat-icon class="sidebar__user-icon icon-danger" (click)="logout()">exit_to_app</mat-icon>
+        </div>
+    </div>
+</header>
+
+<aside class="sidebar" [class.open]="isOpen">
+    <ul class="sidebar__menu">
+        <div class="containt-item">
+            <li class="sidebar__item">
+                <a class="sidebar__link" href="#">
+                    <mat-icon class="sidebar__icon">book</mat-icon>
+                    Libros
+                </a>
+            </li>
+            <div class="divider"></div>
+        </div>
+        <div class="containt-item">
+            <li class="sidebar__item">
+                <a class="sidebar__link" href="#">
+                    <mat-icon class="sidebar__icon">people</mat-icon>
+                    Usuarios
+                </a>
+            </li>
+            <div class="divider"></div>
+        </div>
+        <div class="containt-item">
+            <li class="sidebar__item">
+                <a class="sidebar__link" href="#">
+                    <mat-icon class="sidebar__icon">calendar_today</mat-icon>
+                    Reservaciones
+                </a>
+            </li>
+            <div class="divider"></div>
+        </div>
+        <div class="containt-item">
+            <li class="sidebar__item">
+                <a class="sidebar__link" href="#">
+                    <mat-icon class="sidebar__icon">attach_money</mat-icon>
+                    Ventas
+                </a>
+            </li>
+            <div class="divider"></div>
+        </div>
+    </ul>
+
+</aside>

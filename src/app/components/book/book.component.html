@@ -1,0 +1,34 @@
+<app-sidebar></app-sidebar>
+<div class="container1">
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titulo</th>
+          <th>Autor</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let libro of libros">
+          <td>{{ libro.id }}</td>
+          <td>{{ libro.title }}</td>
+          <td>{{ libro.author }}</td>
+          <td>
+            <button class="btn btn-primary" (click)="ver(libro)">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button class="btn btn-warning" (click)="actualizar(libro)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-danger" (click)="eliminar(libro)">
+                <i class="bi bi-trash"></i>
+              </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
