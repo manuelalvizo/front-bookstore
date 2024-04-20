@@ -1,3 +1,10 @@
+export interface BooksInterface {
+    
+    books: BookInterface[];
+
+    totalElements:number;
+}
+
 export interface BookInterface {
     
     title: string;
@@ -20,5 +27,7 @@ export interface BookInterface {
 
     status: string;
     
-    id:string
+    id:string;
+    
+    seleccionado: boolean;
 }
