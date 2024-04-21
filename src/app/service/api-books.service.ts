@@ -22,4 +22,13 @@ export class ApiBooksService {
   public registerBooks(newBook:BookInterface): Observable<BookInterface> {
     return this.http.post<BookInterface>(this.urlApi, newBook);
   }
+
+  public deleteBook(id: string): Observable<BookInterface> {
+    return this.http.delete<BookInterface>(`${this.urlApi}/${id}`);
+  }
+
+  public updateBook(updateBook:BookInterface): Observable<BookInterface> {
+    return this.http.patch<BookInterface>(`${this.urlApi}/${updateBook.id}`, updateBook);
+  }
+  
 }

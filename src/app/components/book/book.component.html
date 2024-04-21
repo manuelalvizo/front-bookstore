@@ -3,15 +3,13 @@
   <div class="container">
     <p class="h3 w-100 text-left pt-2">Libros</p>
 
-    <div class=" d-flex justify-content-end align-items-center mb-1 pb-1">
-
+    <div class="d-flex justify-content-end align-items-center mb-1 pb-1">
       <div class="input-group w-25 align-self-start">
         <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="text" class="form-control" placeholder="Buscar" aria-label="Buscar"
-          aria-describedby="basic-addon1">
+        <input type="text" class="form-control" placeholder="Buscar" aria-label="Buscar" [(ngModel)]="filtro" aria-describedby="basic-addon1">
       </div>
 
-      <div class="input-group w-25 d-flex justify-content-center align-items-center">
+      <div class="input-group w-25 d-flex justify-content-center align-items-center pt-3 ms-auto">
         <nav aria-label="Page navigation example" *ngIf="numeroPaginas != 0">
           <ul class="pagination pagination-sm">
             <li class="page-item">
@@ -19,11 +17,10 @@
                 <span aria-hidden="true">&lt;</span>
               </a>
             </li>
-            <li class="page-item" >
+            <li class="page-item">
               <a class="page-link" href="#" aria-label="Siguiente">
                 <span aria-hidden="true">{{paginaActual}} de {{paginas.length}}</span>
               </a>
-              
             </li>
             <li class="page-item">
               <a class="page-link" href="#" (click)="seleccionarPagina(paginaActual + 1)" aria-label="Siguiente">
@@ -33,17 +30,18 @@
           </ul>
         </nav>
       </div>
+ 
+    
       
       <div class="d-flex justify-content-end">
         <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" *ngIf="libroSeleccionado"
           data-bs-target="#exampleModal">
           <i class="bi bi-eye"></i>
         </button>
-        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" *ngIf="libroSeleccionado"
-          (click)="actualizar()" data-bs-target="#cerrarMod">
+        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" *ngIf="libroSeleccionado" data-bs-target="#cerrarMod">
           <i class="bi bi-pencil"></i>
         </button>
-        <button type="button" class="btn btn-outline-danger btn-sm" *ngIf="libroSeleccionado" (click)="eliminar()">
+        <button type="button" class="btn btn-outline-danger btn-sm" *ngIf="libroSeleccionado" (click)="confirmationDelete()">
           <i class="bi bi-trash"></i>
         </button>
         <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" *ngIf="!libroSeleccionado"
@@ -52,7 +50,6 @@
         </button>
       </div>
     </div>
-
 
     <table class="table table-light table-hover table-striped">
       <thead>
@@ -64,16 +61,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let libro of libros">
-          <td><input type="radio" name="selectedBook" (change)="selectBook(libro)"></td>
-          <td>{{ libro.id }}</td>
-          <td>{{ libro.title }}</td>
-          <td>{{ libro.author }}</td>
-        </tr>
+        <ng-container *ngFor="let libro of libros | filtroLibros: filtro" >
+          <tr (click)="selectBook(libro)">
+            <td>
+              <input type="radio" name="selectedBook" [checked]="libroSeleccionado === libro" (change)="selectBook(libro)">
+            </td>
+            <td>{{ libro.id }}</td>
+            <td>{{ libro.title }}</td>
+            <td>{{ libro.author }}</td>
+          </tr>
+        </ng-container>
       </tbody>
-
     </table>
     
+    
+    <div class="w-100 d-flex justify-content-end align-items-center mb-5 pb-5" *ngIf="libroSeleccionado">
+      <button type="button" (click)="limpiarCampos()" class="btn btn-outline-danger btn-sm">Desmarcar selección</button>
+    </div>
 
   </div>
 </div>
@@ -90,54 +94,54 @@
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="titulo" id="titulo" placeholder="titutlo"
-            [(ngModel)]="nuevoLibro.title" required>
+            [(ngModel)]="newBook.title" required>
           <label for="titulo" class="form-label">Titulo</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="author" id="author" placeholder="author"
-            [(ngModel)]="nuevoLibro.author" required>
+            [(ngModel)]="newBook.author" required>
           <label for="author" class="form-label">Autor</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="genre" id="genre" placeholder="genre"
-            [(ngModel)]="nuevoLibro.genre" required>
+            [(ngModel)]="newBook.genre" required>
           <label for="genre" class="form-label">Género</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="number" class="form-control" name="year_publication" id="year_publication"
-            placeholder="year_publication" [(ngModel)]="nuevoLibro.year_publication" required>
+            placeholder="year_publication" [(ngModel)]="newBook.year_publication" required>
           <label for="year_publication" class="form-label">Año de publicación</label>
         </div>
 
         <div class="form-floating mb-1">
-          <input type="text" class="form-control" name="isbn" id="isbn" placeholder="isbn" [(ngModel)]="nuevoLibro.isbn"
+          <input type="text" class="form-control" name="isbn" id="isbn" placeholder="isbn" [(ngModel)]="newBook.isbn"
             required>
           <label for="isbn" class="form-label">ISBN</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="editorial" id="editorial" placeholder="editorial"
-            [(ngModel)]="nuevoLibro.editorial" required>
+            [(ngModel)]="newBook.editorial" required>
           <label for="editorial" class="form-label">Editorial</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="number" class="form-control" name="pages" id="pages" placeholder="pages"
-            [(ngModel)]="nuevoLibro.pages" required>
+            [(ngModel)]="newBook.pages" required>
           <label for="pages" class="form-label">Número de paginas</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="language" id="language" placeholder="language"
-            [(ngModel)]="nuevoLibro.language" required>
+            [(ngModel)]="newBook.language" required>
           <label for="language" class="form-label">Idioma</label>
         </div>
 
         <div class="form-floating mb-1">
-          <select class="form-select" name="format" id="format" [(ngModel)]="nuevoLibro.format" required>
+          <select class="form-select" name="format" id="format" [(ngModel)]="newBook.format" required>
             <option value="" disabled selected>Selecciona un formato</option>
             <option value="papel">Papel</option>
             <option value="ebook">Ebook</option>
@@ -148,7 +152,7 @@
         </div>
 
         <div class="form-floating mb-1">
-          <select class="form-select" name="status" id="status" [(ngModel)]="nuevoLibro.status" required>
+          <select class="form-select" name="status" id="status" [(ngModel)]="newBook.status" required>
             <option value="" disabled selected>Selecciona un estado</option>
             <option value="nuevo">Nuevo</option>
             <option value="usado">Usado</option>
@@ -180,54 +184,54 @@
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="titulo" id="titulo" placeholder="titutlo"
-            [(ngModel)]="nuevoLibro.title" required>
+            [(ngModel)]="newBook.title" required>
           <label for="titulo" class="form-label">Titulo</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="author" id="author" placeholder="author"
-            [(ngModel)]="nuevoLibro.author" required>
+            [(ngModel)]="newBook.author" required>
           <label for="author" class="form-label">Autor</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="genre" id="genre" placeholder="genre"
-            [(ngModel)]="nuevoLibro.genre" required>
+            [(ngModel)]="newBook.genre" required>
           <label for="genre" class="form-label">Género</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="number" class="form-control" name="year_publication" id="year_publication"
-            placeholder="year_publication" [(ngModel)]="nuevoLibro.year_publication" required>
+            placeholder="year_publication" [(ngModel)]="newBook.year_publication" required>
           <label for="year_publication" class="form-label">Año de publicación</label>
         </div>
 
         <div class="form-floating mb-1">
-          <input type="text" class="form-control" name="isbn" id="isbn" placeholder="isbn" [(ngModel)]="nuevoLibro.isbn"
+          <input type="text" class="form-control" name="isbn" id="isbn" placeholder="isbn" [(ngModel)]="newBook.isbn"
             required>
           <label for="isbn" class="form-label">ISBN</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="editorial" id="editorial" placeholder="editorial"
-            [(ngModel)]="nuevoLibro.editorial" required>
+            [(ngModel)]="newBook.editorial" required>
           <label for="editorial" class="form-label">Editorial</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="number" class="form-control" name="pages" id="pages" placeholder="pages"
-            [(ngModel)]="nuevoLibro.pages" required>
+            [(ngModel)]="newBook.pages" required>
           <label for="pages" class="form-label">Número de paginas</label>
         </div>
 
         <div class="form-floating mb-1">
           <input type="text" class="form-control" name="language" id="language" placeholder="language"
-            [(ngModel)]="nuevoLibro.language" required>
+            [(ngModel)]="newBook.language" required>
           <label for="language" class="form-label">Idioma</label>
         </div>
 
         <div class="form-floating mb-1">
-          <select class="form-select" name="format" id="format" [(ngModel)]="nuevoLibro.format" required>
+          <select class="form-select" name="format" id="format" [(ngModel)]="newBook.format" required>
             <option value="" disabled selected>Selecciona un formato</option>
             <option value="papel">Papel</option>
             <option value="ebook">Ebook</option>
@@ -238,7 +242,7 @@
         </div>
 
         <div class="form-floating mb-1">
-          <select class="form-select" name="status" id="status" [(ngModel)]="nuevoLibro.status" required>
+          <select class="form-select" name="status" id="status" [(ngModel)]="newBook.status" required>
             <option value="" disabled selected>Selecciona un estado</option>
             <option value="nuevo">Nuevo</option>
             <option value="usado">Usado</option>

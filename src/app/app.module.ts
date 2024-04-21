@@ -16,6 +16,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { SidebarComponent } from './components/static/sidebar/sidebar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { FiltrosLibrosPipeTsPipe } from './pipes/filtros-libros.pipe.ts.pipe';
+import { ActionsUsersComponent } from './components/users/actions-users/actions-users.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { MatTableModule } from '@angular/material/table';
     FooterComponent,
     LoginComponent,
     RegisterComponent,
-    SidebarComponent
+    SidebarComponent,
+    FiltrosLibrosPipeTsPipe,
+    ActionsUsersComponent
   ],
   imports: [
     BrowserModule,

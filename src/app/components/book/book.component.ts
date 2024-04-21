@@ -18,7 +18,8 @@ export class BookComponent {
   numeroPaginas = 0;
   paginas: number[] = [];
   paginaActual: number = 1;
-  nuevoLibro: BookInterface = {
+  filtro:string = '';
+  newBook: BookInterface = {
     title: '',
     author: '',
     genre: '',
@@ -44,13 +45,12 @@ export class BookComponent {
 
   selectBook(libro: any) {
     this.libroSeleccionado = libro;
-    this.nuevoLibro = libro;
-    console.log('Libro seleccionado:', this.libroSeleccionado);
+    this.newBook = libro;
   }
 
   getBooks() {
     this.loading = true;
-    const limit: number = 10;
+    const limit: number = 5;
     const subscription: Subscription = this.apiBooksService.getBooks(limit, this.paginaActual)
       .subscribe({
         next: (librosData) => {
@@ -63,7 +63,6 @@ export class BookComponent {
           this.loading = false;
         },
         error: (error: ErrorInterface) => {
-          console.error(error);
           this.loading = false;
           this.alertService.fallido(error.error.message.toString());
         }
@@ -78,13 +77,27 @@ export class BookComponent {
   }
 
   actualizar() {
-    this.nuevoLibro = this.libroSeleccionado;
+    const subscription: Subscription = this.apiBooksService
+      .updateBook(this.newBook)
+      .subscribe({
+        next: (response: BookInterface) => {
+          this.loading = false;
+          this.limpiarCampos();
+          this.alertService.exitoso('Se actualizo correctamente el libro');
+          this.getBooks();
+        },
+        error: (error: ErrorInterface) => {
+          console.error(error);
+          this.loading = false;
+          this.alertService.fallido(error.error.message.toString());
+        },
+      });
   }
 
-  eliminar() {
-    this.nuevoLibro = this.libroSeleccionado;
+  confirmationDelete() {
+    this.newBook = this.libroSeleccionado;
     Swal.fire({
-      title: "Estas seguro que deseas eliminar el libro: \n "+this.nuevoLibro.title+ "?",
+      title: "Estas seguro que deseas eliminar el libro: \n "+this.newBook.title+ "?",
       text: "Esta acción no se puede revertir!",
       icon: "warning",
       showCancelButton: true,
@@ -94,19 +107,32 @@ export class BookComponent {
       cancelButtonText: "Cancelar" 
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Eliminado!",
-          text: "El libro ha sido eliminado.",
-          icon: "success"
-        });
+        this.deleteBook();
       }
     });
   }
 
-  registrarLibro() {
-    console.log('Nuevo libro:', this.nuevoLibro);
+  deleteBook(){
     const subscription: Subscription = this.apiBooksService
-      .registerBooks(this.nuevoLibro)
+      .deleteBook(this.newBook.id)
+      .subscribe({
+        next: (response: BookInterface) => {
+          this.loading = false;
+          this.limpiarCampos();
+          this.alertService.exitoso('Se elimino correctamente el libro');
+          this.getBooks();
+        },
+        error: (error: ErrorInterface) => {
+          console.error(error);
+          this.loading = false;
+          this.alertService.fallido(error.error.message.toString());
+        },
+      });
+  };
+
+  registrarLibro() {
+    const subscription: Subscription = this.apiBooksService
+      .registerBooks(this.newBook)
       .subscribe({
         next: (response: BookInterface) => {
           this.loading = false;
@@ -123,7 +149,7 @@ export class BookComponent {
   }
 
   limpiarCampos() {
-    this.nuevoLibro = {
+    this.newBook = {
       title: '',
       author: '',
       genre: '',
@@ -137,5 +163,8 @@ export class BookComponent {
       id: '',
       seleccionado: false,
     };
+
+    this.libroSeleccionado = null;
   }
+
 }

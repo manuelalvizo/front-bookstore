@@ -5,6 +5,7 @@ import { RegisterComponent } from './components/users/register/register.componen
 import { LoginComponent } from './components/users/login/login.component';
 import { AuthGuard } from './security/user-guard.guard';
 import { NoAuthGuard } from './security/login-guard.guard';
+import { ActionsUsersComponent } from './components/users/actions-users/actions-users.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,11 @@ const routes: Routes = [
   {
     path: 'books', 
     component: BookComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'users', 
+    component: ActionsUsersComponent,
     canActivate: [AuthGuard]
   },
   {
