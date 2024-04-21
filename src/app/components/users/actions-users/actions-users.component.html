@@ -1,0 +1,155 @@
+<app-sidebar></app-sidebar>
+<div class="container">
+    <p class="h3 w-100 text-left pt-2">Usuarios</p>
+
+    <div class="d-flex justify-content-end align-items-center mb-1 pb-1">
+      <div class="input-group w-25 align-self-start">
+        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" placeholder="Buscar" aria-label="Buscar" [(ngModel)]="filtro" aria-describedby="basic-addon1">
+      </div>
+
+      <div class="input-group w-25 d-flex justify-content-center align-items-center pt-3 ms-auto">
+        <nav aria-label="Page navigation example" *ngIf="numeroPaginas != 0">
+          <ul class="pagination pagination-sm">
+            <li class="page-item">
+              <a class="page-link" href="#" (click)="seleccionarPagina(paginaActual - 1)" aria-label="Anterior">
+                <span aria-hidden="true">&lt;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Siguiente">
+                <span aria-hidden="true">{{paginaActual}} de {{paginas.length}}</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#" (click)="seleccionarPagina(paginaActual + 1)" aria-label="Siguiente">
+                <span aria-hidden="true">&gt;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+ 
+    
+      
+      <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" *ngIf="userSelected"
+          data-bs-target="#exampleModal">
+          <i class="bi bi-eye"></i>
+        </button>
+        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" *ngIf="userSelected" data-bs-target="#cerrarMod">
+          <i class="bi bi-pencil"></i>
+        </button>
+        <button type="button" class="btn btn-outline-danger btn-sm" *ngIf="userSelected" (click)="confirmationDelete()">
+          <i class="bi bi-trash"></i>
+        </button>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" *ngIf="!userSelected"
+          data-bs-target="#exampleModal">
+          <i class="bi bi-plus"></i>
+        </button>
+      </div>
+    </div>
+
+    <table class="table table-light table-hover table-striped">
+      <thead>
+        <tr>
+          <th></th>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let user of users | filtroLibros: filtro" >
+          <tr (click)="selectUser(user)">
+            <td>
+              <input type="radio" name="selectedBook" [checked]="userSelected === user" (change)="selectUser(user)">
+            </td>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    
+    
+    <div class="w-100 d-flex justify-content-end align-items-center mb-5 pb-5" *ngIf="userSelected">
+      <button type="button" (click)="limpiarCampos()" class="btn btn-outline-danger btn-sm">Desmarcar selección</button>
+    </div>
+
+  </div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLabel" *ngIf="!userSelected">Nuevo libro</h3>
+        <h3 class="modal-title" id="exampleModalLabel" *ngIf="userSelected">Ver libro</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-floating mb-1">
+          <input type="text" class="form-control" name="titulo" id="titulo" placeholder="titutlo"
+            [(ngModel)]="newUser.name" required>
+          <label for="titulo" class="form-label">Nombre</label>
+        </div>
+
+        <div class="form-floating mb-1">
+          <input type="text" class="form-control" name="author" id="author" placeholder="author"
+            [(ngModel)]="newUser.email" required>
+          <label for="author" class="form-label">Email</label>
+        </div>
+
+        <div class="form-floating mb-1">
+          <input type="text" class="form-control" name="genre" id="genre" placeholder="genre"
+            [(ngModel)]="newUser.roles" required>
+          <label for="genre" class="form-label">Roles</label>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">cerrar</button>
+        <button type="button" class="btn btn-outline-primary" *ngIf="!userSelected">Registrar libro</button>
+      </div>
+    </div>
+  </div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '10px' }"></ngx-loading>
+
+
+<div class="modal fade" id="cerrarMod" tabindex="-1" aria-labelledby="modalCerrar" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalCerrar">Actualizar libro</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-floating mb-1">
+            <input type="text" class="form-control" name="titulo" id="titulo" placeholder="titutlo"
+              [(ngModel)]="newUser.name" required>
+            <label for="titulo" class="form-label">Nombre</label>
+          </div>
+  
+          <div class="form-floating mb-1">
+            <input type="text" class="form-control" name="author" id="author" placeholder="author"
+              [(ngModel)]="newUser.email" required>
+            <label for="author" class="form-label">Email</label>
+          </div>
+  
+          <div class="form-floating mb-1">
+            <input type="text" class="form-control" name="genre" id="genre" placeholder="genre"
+              [(ngModel)]="newUser.roles" required>
+            <label for="genre" class="form-label">Roles</label>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">cancelar</button>
+        <button type="button" class="btn btn-outline-warning" *ngIf="userSelected"
+          (click)="actualizar()">actualizar</button>
+      </div>
+    </div>
+</div>

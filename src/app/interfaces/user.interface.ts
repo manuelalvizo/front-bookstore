@@ -1,5 +1,7 @@
 export interface UserInterface {
     
+    id?:string
+
     name?: string;
   
     email: string;
@@ -8,6 +10,14 @@ export interface UserInterface {
   
     roles ?: string[];
 }
+
+export interface UsersInterface {
+    
+    users: UserInterface[];
+    
+    totalElements: number
+}
+
 
 export interface LoginInterface {
     

@@ -8,56 +8,7 @@
     margin: 60px ;
 }
 
-/* CSS para intercalar el fondo de cada registro */
-#example tbody tr:nth-child(even) {
-    background-color: #f2f2f2; /* Cambia este color según tus preferencias */
+.page-item.active .page-link {
+    background-color: #007bff; /* Cambia esto por el color de fondo deseado */
+    color: #fff; /* Cambia esto por el color de texto deseado */
   }
-  
-  #example tbody tr:nth-child(odd) {
-    background-color: #ffffff; /* Cambia este color según tus preferencias */
-  }
-
-  /* CSS para estilizar la tabla DataTables */
-#example {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  
-  #example th,
-  #example td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-  }
-  
-  #example tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  #example th {
-    background-color: #515651;
-    color: white;
-  }
-  
-  /* Agregando bordes redondeados */
-  #example th:first-child {
-    border-top-left-radius: 5px;
-  }
-  
-  #example th:last-child {
-    border-top-right-radius: 5px;
-  }
-  
-  #example th:last-child,
-  #example td:last-child {
-    border-right: none;
-  }
-  
-  #example tr:last-child td:first-child {
-    border-bottom-left-radius: 5px;
-  }
-  
-  #example tr:last-child td:last-child {
-    border-bottom-right-radius: 5px;
-  }
-  
