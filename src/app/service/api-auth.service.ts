@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoginInterface, UserInterface, UsersInterface } from '../interfaces/user.interface';
 import { Observable } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,9 @@ export class ApiAuthService {
 
   private urlApi = 'https://app-security-wihjrgjcba-uc.a.run.app/api/v1/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private cookieService: CookieService
+  ) { }
 
   public register(user: UserInterface): Observable<UserInterface> {
     return this.http.post<UserInterface>(this.urlApi + 'auth/register', user);
@@ -34,5 +37,9 @@ export class ApiAuthService {
 
   public updateUser(updateUser:UserInterface): Observable<UserInterface> {
     return this.http.patch<UserInterface>(`${this.urlApi+ 'users'}/${updateUser.id}`, updateUser);
+  }
+
+  public getRoles():string[]{
+    return this.cookieService.get('roles').split(',');
   }
 }

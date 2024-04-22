@@ -4,9 +4,21 @@
     <p class="h3 w-100 text-left pt-2">Libros</p>
 
     <div class="d-flex justify-content-end align-items-center mb-1 pb-1">
-      <div class="input-group w-25 align-self-start">
+      <div class="input-group w-50 align-self-start">
+        <select class="form-select" aria-label="Default select example" (input)="onInputChange($event)">
+          <option selected>Selecciona un tipo de filtro</option>
+          <option value="title" selected>Titulo</option>
+          <option value="id" >ID</option>
+          <option value="author">Autor</option>
+          <option value="genre">Genero</option>
+          <option value="isbn">ISBN</option>
+          <option value="editorial">Editorial</option>
+          <option value="language">Idioma</option>
+          <option value="format">Formato</option>
+          <option value="status">Estatus</option>
+        </select>
         <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="text" class="form-control" placeholder="Buscar" aria-label="Buscar" [(ngModel)]="filtro" aria-describedby="basic-addon1">
+        <input type="text" class="form-control" placeholder="Buscar" aria-label="Buscar" [(ngModel)]="filtro" (input)="onInputChange($event)" aria-describedby="basic-addon1">
       </div>
 
       <div class="input-group w-25 d-flex justify-content-center align-items-center pt-3 ms-auto">
@@ -38,14 +50,16 @@
           data-bs-target="#exampleModal">
           <i class="bi bi-eye"></i>
         </button>
-        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" *ngIf="libroSeleccionado" data-bs-target="#cerrarMod">
+        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" 
+        *ngIf="libroSeleccionado && (roles.includes('admin') || roles.includes('write'))" data-bs-target="#cerrarMod">
           <i class="bi bi-pencil"></i>
         </button>
-        <button type="button" class="btn btn-outline-danger btn-sm" *ngIf="libroSeleccionado" (click)="confirmationDelete()">
+        <button type="button" class="btn btn-outline-danger btn-sm" 
+        *ngIf="libroSeleccionado && (roles.includes('admin') || roles.includes('write'))" (click)="confirmationDelete()">
           <i class="bi bi-trash"></i>
         </button>
-        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" *ngIf="!libroSeleccionado"
-          data-bs-target="#exampleModal">
+        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" 
+        *ngIf="!libroSeleccionado && (roles.includes('admin') || roles.includes('write'))" data-bs-target="#exampleModal">
           <i class="bi bi-plus"></i>
         </button>
       </div>
@@ -61,7 +75,7 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let libro of libros | filtroLibros: filtro" >
+        <ng-container *ngFor="let libro of libros" >
           <tr (click)="selectBook(libro)">
             <td>
               <input type="radio" name="selectedBook" [checked]="libroSeleccionado === libro" (change)="selectBook(libro)">

@@ -11,11 +11,15 @@ export class ApiBooksService {
   private urlApi = 'https://app-book-wihjrgjcba-uc.a.run.app/api/v1/books';
   constructor(private http: HttpClient) { }
 
-  public getBooks(limit: number, page: number): Observable<BooksInterface> {
-    const params = new HttpParams()
+  public getBooks(limit: number, page: number, cadenaFiltro?: string): Observable<BooksInterface> {
+    let params = new HttpParams()
       .set('limit', limit.toString())
       .set('page', page.toString());
-
+  
+    if (cadenaFiltro) {
+      params = params.set('filter', cadenaFiltro.toString().trim());
+    }
+  
     return this.http.get<BooksInterface>(this.urlApi, { params });
   }
 
