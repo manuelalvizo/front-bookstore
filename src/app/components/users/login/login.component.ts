@@ -35,6 +35,7 @@ export class LoginComponent {
       next: (response: LoginInterface) => {
         this.cookieService.set('token', response.token);
         response.user.name ? this.cookieService.set('name', response.user.name) : null;
+        response.user.roles ? this.cookieService.set('roles', response.user.roles.toString()) : null;
         // Manejar la respuesta como sea necesario
         this.loading = false; // Ocultar loader
         this.limpiarCampos();
@@ -44,7 +45,6 @@ export class LoginComponent {
         console.error(error);
         this.loading = false; // Ocultar loader en caso de error
         this.alertaService.fallido(error.error.message.toString());
-        
       }
     });
   }

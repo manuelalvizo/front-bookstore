@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { AlertService } from '../../service/alert.service';
 import { ErrorInterface } from '../../interfaces/error.interface';
 import Swal from 'sweetalert2';
+import { ApiAuthService } from '../../service/api-auth.service';
 declare var $: any; // Esto es para acceder a la función jQuery
 @Component({
   selector: 'app-book',
@@ -12,6 +13,8 @@ declare var $: any; // Esto es para acceder a la función jQuery
   styleUrl: './book.component.css',
 })
 export class BookComponent {
+
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
   libros: BookInterface[] = [];
   libroSeleccionado: any;
   loading: boolean = false;
@@ -34,12 +37,15 @@ export class BookComponent {
     seleccionado: false,
   };
   titulo: string = '';
+  roles: string[] = [];
   constructor(
     private apiBooksService: ApiBooksService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: ApiAuthService
   ) {}
 
   ngOnInit(): void {
+    this.roles =  this.authService.getRoles();
     this.getBooks();
   }
 
@@ -48,10 +54,29 @@ export class BookComponent {
     this.newBook = libro;
   }
 
-  getBooks() {
+  onInputChange(event: Event) {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId); // Cancela la ejecución previa si hay una
+    }
+  
+    this.timeoutId = setTimeout(() => {
+      this.filtrarDatos();
+      this.timeoutId = null; // Restablece el identificador del temporizador después de la ejecución
+    }, 1000);
+  }
+  
+  filtrarDatos() {
+    const filtroSeleccionado = (document.querySelector('.form-select') as HTMLSelectElement).value;
+    const cadenaFiltro = `{"${filtroSeleccionado}":"${this.filtro.trim()}"}`;
+    this.getBooks(cadenaFiltro);
+    console.log(cadenaFiltro);
+
+  }
+
+  getBooks(cadenaFiltro?:string) {
     this.loading = true;
     const limit: number = 5;
-    const subscription: Subscription = this.apiBooksService.getBooks(limit, this.paginaActual)
+    const subscription: Subscription = this.apiBooksService.getBooks(limit, this.paginaActual, cadenaFiltro)
       .subscribe({
         next: (librosData) => {
           this.libros = librosData.books;
@@ -64,6 +89,8 @@ export class BookComponent {
         },
         error: (error: ErrorInterface) => {
           this.loading = false;
+          this.limpiarCampos();
+          this.libros= [];
           this.alertService.fallido(error.error.message.toString());
         }
       });
@@ -137,6 +164,7 @@ export class BookComponent {
         next: (response: BookInterface) => {
           this.loading = false;
           this.limpiarCampos();
+          this.numeroPaginas = 0;
           this.alertService.exitoso('Se registró correctamente el libro');
           this.getBooks();
         },

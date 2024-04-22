@@ -10,24 +10,24 @@ declare var $: any; // Esto es para acceder a la función jQuery
 @Component({
   selector: 'app-actions-users',
   templateUrl: './actions-users.component.html',
-  styleUrl: './actions-users.component.css'
+  styleUrl: './actions-users.component.css',
 })
 export class ActionsUsersComponent {
-
   users: UserInterface[] = [];
   userSelected: any;
   loading: boolean = false;
   numeroPaginas = 0;
   paginas: number[] = [];
   paginaActual: number = 1;
-  filtro:string = '';
+  filtro: string = '';
   newUser: UserInterface = {
     id: '',
     name: '',
     email: '',
     password: '',
-    roles: []
-  }
+    roles: [],
+  };
+  roles: string[] = [];
 
   constructor(
     private apiAuthService: ApiAuthService,
@@ -35,13 +35,28 @@ export class ActionsUsersComponent {
   ) {}
 
   ngOnInit(): void {
+    this.roles =  this.apiAuthService.getRoles();
     this.getUsers();
   }
 
-  getUsers(){
+
+  onInputChange(event: Event) {
+    setTimeout(() => {
+      this.filtrarDatos();
+    }, 3000); // Espera 3 segundos antes de llamar a filtrarDatos()
+  }
+
+  filtrarDatos() {
+    const filtroSeleccionado = (document.querySelector('.form-select') as HTMLSelectElement).value;
+    const cadenaFiltro = `{${filtroSeleccionado}: ${this.filtro}}`;
+    console.log(cadenaFiltro); // Aquí puedes hacer lo que quieras con la cadena formada
+  }
+
+  getUsers() {
     this.loading = true;
     const limit: number = 50;
-    const subscription: Subscription = this.apiAuthService.getUsers(limit, this.paginaActual)
+    const subscription: Subscription = this.apiAuthService
+      .getUsers(limit, this.paginaActual)
       .subscribe({
         next: (usersData) => {
           this.users = usersData.users;
@@ -55,12 +70,12 @@ export class ActionsUsersComponent {
         error: (error: ErrorInterface) => {
           this.loading = false;
           this.alertService.fallido(error.error.message.toString());
-        }
+        },
       });
   }
 
   seleccionarPagina(pagina: number): void {
-    if(pagina > 0 && pagina <= this.numeroPaginas){
+    if (pagina > 0 && pagina <= this.numeroPaginas) {
       this.paginaActual = pagina;
       this.getUsers();
     }
@@ -69,14 +84,17 @@ export class ActionsUsersComponent {
   confirmationDelete() {
     this.newUser = this.userSelected;
     Swal.fire({
-      title: "Estas seguro que deseas eliminar el libro: \n "+this.newUser.name+ "?",
-      text: "Esta acción no se puede revertir!",
-      icon: "warning",
+      title:
+        'Estas seguro que deseas eliminar el libro: \n ' +
+        this.newUser.name +
+        '?',
+      text: 'Esta acción no se puede revertir!',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, deseo eliminarlo!",
-      cancelButtonText: "Cancelar" 
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, deseo eliminarlo!',
+      cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.deleteBook();
@@ -84,7 +102,7 @@ export class ActionsUsersComponent {
     });
   }
 
-  deleteBook(){
+  deleteBook() {
     if (this.newUser && this.newUser.id) {
       const subscription: Subscription = this.apiAuthService
         .deleteUser(this.newUser.id)
@@ -101,12 +119,19 @@ export class ActionsUsersComponent {
             this.alertService.fallido(error.error.message.toString());
           },
         });
-      } else {
-        this.alertService.fallido("El ID del usuario no está definido.");
-      }
-  };
+    } else {
+      this.alertService.fallido('El ID del usuario no está definido.');
+    }
+  }
 
   actualizar() {
+    const rolesString = this.newUser.roles?.toString();
+    let roles: string[] = [];
+    if (rolesString) {
+      roles = rolesString.split(','); // Divide la cadena en elementos usando la coma como separador
+    }
+    this.newUser.roles = roles;
+    console.log(this.newUser.roles);
     const subscription: Subscription = this.apiAuthService
       .updateUser(this.newUser)
       .subscribe({
@@ -135,10 +160,8 @@ export class ActionsUsersComponent {
       name: '',
       email: '',
       password: '',
-      roles: []
-    }
+      roles: [],
+    };
     this.userSelected = null;
   }
-
-
 }
